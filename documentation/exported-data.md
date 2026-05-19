@@ -1,7 +1,7 @@
-# About the AIBot data model
+# About the JSON data model
 
 ## Table of contents
-- [About the AIBot data model](#about-the-aibot-data-model)
+- [About the JSON data model](#about-the-json-data-model)
   - [Table of contents](#table-of-contents)
   - [Introduction](#introduction)
   - [Accessing the repository contents](#accessing-the-repository-contents)
@@ -24,22 +24,7 @@
       - [CollectionModel](#collectionmodel)
 
 ## Introduction
-The command line tool will populate a local folder with JSON files and resources as they are exported from the project.
-
-Typically these will be uploaded to an Azure storage container. A SAS URI will be handed to the customer with the following configuration:
-1. A policy is created that provides READ access (**not list**) on the container for a limited time
-1. A SAS URI is created for the container based on that policy
-
-A policy is used so the lease on the container can be extended without needing to share another URL with the customer.
-
-## Accessing the repository contents
-
-Typically when getting access to an AskDelphi export, you will get a URL that allows you to download a single file called "index.json" from some online storage location, for example: *https://storageoutputurlexample.blob.core.windows.net/your-project/index.json?sv=2023-01-03&si=strategyframe-de-read&sr=c&sig=REDACTED*
-
-You can split this URI in two parts being the base URL: *https://storageoutputurlexample.blob.core.windows.net/your-project/* and 
-the access key *?sv=2023-01-03&si=strategyframe-de-read&sr=c&sig=REDACTED*
-
-You can access any file in the repository by creating an HTTP GET request for the base URL, followed by the path of the file and then append the signature to the end as a query string. So if you wanted to access the file '*images/ef17bd10-78.png*' from the repository, you'd create a URI *https://storageoutputurlexample.blob.core.windows.net/your-project/images/ef17bd10-78.png?sv=2023-01-03&si=strategyframe-de-read&sr=c&sig=REDACTED*  and issue a GET request for that.
+The command line tool will populate a local folder with JSON files and resources as they are exported from the project. These files can be uploaded 
 
 ## The index.json model
 
