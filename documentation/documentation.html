@@ -1,0 +1,827 @@
+<html>
+<head>
+    <style type="text/css">
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            padding: 20px;
+        }
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            margin-bottom: 20px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+        }
+        th {
+            background-color: #f2f2f2;
+            font-weight: bold;
+        }
+        pre, code {
+            background: #f4f4f4;
+            padding: 5px;
+            border-radius: 3px;
+        }
+        h1, h2, h3, h4 {
+            margin-top: 1.4em;
+            display: block;
+            width: 100%;
+        }
+        h1 {
+            font-size: xx-large;
+            color: #111;
+            border-bottom: 1px solid #111;
+        }
+        h2 {
+            font-size: x-large;
+            color: #246;
+            border-bottom: 1px solid #246;
+        }
+        h3 {
+            font-size: x-large;
+            color: #357;
+            border-bottom: 1px solid #357;
+        }
+        h4 {
+            font-size: large;
+            color: #579;
+            border-bottom: 1px solid #579;
+        }
+    </style>
+
+</head>
+<body>
+    <h1 id="about-the-aibot-data-model">About the data model</h1>
+    <h2 id="table-of-contents">Table of contents</h2>
+    <ul>
+        <li><a href="#introduction">Introduction</a></li>
+        <li><a href="#accessing-the-repository-contents">Accessing the repository contents</a></li>
+        <li><a href="#the-index.json-model">The index.json model</a></li>
+        <li><a href="#content-json-files">Content JSON files</a>
+            <ul>
+                <li><a href="#the-relation-model">The Relation model</a></li>
+                <li><a href="#type-specific-properties">Type-specific properties</a>
+                    <ul>
+                        <li><a href="#actionmodel">ActionModel</a></li>
+                        <li><a href="#blobmodel">BlobModel</a></li>
+                        <li><a href="#conceptmodel">ConceptModel</a></li>
+                        <li><a href="#examplemodel">ExampleModel</a></li>
+                        <li><a href="#externalcontentmodel">ExternalContentModel</a></li>
+                        <li><a href="#nuggetmodel">NuggetModel</a></li>
+                        <li><a href="#personmodel">PersonModel</a></li>
+                        <li><a href="#processmodel">ProcessModel</a></li>
+                        <li><a href="#simpletopicmodel">SimpleTopicModel</a></li>
+                        <li><a href="#taskmodel">TaskModel</a></li>
+                        <li><a href="#toolmodel">ToolModel</a></li>
+                        <li><a href="#toolmodel">MenuModel</a></li>
+                    </ul>
+                </li>
+            </ul>
+        </li>
+    </ul>
+    <h2 id="introduction">Introduction</h2>
+    <p>The command line tool will populate a local folder with JSON files and resources as they are exported from the
+        project.</p>
+    <p>Typically these will be uploaded to an Azure storage container. A SAS URI will be handed to the customer with the
+        following configuration:</p>
+    <ol>
+        <li>A policy is created that provides READ access (<strong>not list</strong>) on the container for a limited
+            time
+        </li>
+        <li>A SAS URI is created for the container based on that policy</li>
+    </ol>
+    <p>A policy is used so the lease on the container can be extended without needing to share another URL with the
+        customer.</p>
+    <h2 id="accessing-the-repository-contents">Accessing the repository contents</h2>
+    <p>Typically when getting access to an AskDelphi export, you will get a URL that allows you to download a single
+        file
+        called &quot;index.json&quot; from some online storage location, for example: <em><a
+                href="https://storageoutputurlexample.blob.core.windows.net/your-project/index.json?sv=2023-01-03&amp;si=strategyframe-de-read&amp;sr=c&amp;sig=REDACTED">https://storageoutputurlexample.blob.core.windows.net/your-project/index.json?sv=2023-01-03&amp;si=strategyframe-de-read&amp;sr=c&amp;sig=REDACTED</a></em>
+    </p>
+    <p>You can split this URI in two parts being the base URL: <em><a
+                href="https://storageoutputurlexample.blob.core.windows.net/your-project/">https://storageoutputurlexample.blob.core.windows.net/your-project/</a></em>
+        and
+        the access key <em>?sv=2023-01-03&amp;si=strategyframe-de-read&amp;sr=c&amp;sig=REDACTED</em></p>
+    <p>You can access any file in the repository by creating an HTTP GET request for the base URL, followed by the path
+        of
+        the file and then append the signature to the end as a query string. So if you wanted to access the file
+        &#39;<em>images/ef17bd10-78.png</em>&#39; from the repository, you&#39;d create a URI <em><a
+                href="https://storageoutputurlexample.blob.core.windows.net/your-project/images/ef17bd10-78.png?sv=2023-01-03&amp;si=strategyframe-de-read&amp;sr=c&amp;sig=REDACTED">https://storageoutputurlexample.blob.core.windows.net/your-project/images/ef17bd10-78.png?sv=2023-01-03&amp;si=strategyframe-de-read&amp;sr=c&amp;sig=REDACTED</a></em>
+        and issue a GET request for that.</p>
+    <h2 id="the-index-json-model">The index.json model</h2>
+    <p>At the top of the repository you&#39;ll find a file called <em>index.json</em>. In thie file you will find some
+        oinformation about the parameters that were used for generating the export. This is a JSON object containing the
+        following properties:</p>
+    <table>
+        <thead>
+            <tr>
+                <th>Property</th>
+                <th>Type</th>
+                <th>Contents</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>BaseURL</td>
+                <td>URI</td>
+                <td>URL of the API server that was used to generate the export.</td>
+            </tr>
+            <tr>
+                <td>Project</td>
+                <td>Guid</td>
+                <td>Unique identifier of the project that was exported.</td>
+            </tr>
+            <tr>
+                <td>Tenant</td>
+                <td>Guid</td>
+                <td>Unique identifier of the tenant that this project belongs to.</td>
+            </tr>
+            <tr>
+                <td>ContentSet</td>
+                <td>RuleConfiguration</td>
+                <td>The content set definition that defined which top-level elements were to be exported.</td>
+            </tr>
+            <tr>
+                <td>Success</td>
+                <td>Boolean</td>
+                <td>A true value indicates the export succeeded, a false value indicates failure.</td>
+            </tr>
+            <tr>
+                <td>GeneratedFiles</td>
+                <td>Path[]</td>
+                <td>Array of paths to Content JSON files, relative to this file, that contain the top-level objects that
+                    were exported.</td>
+            </tr>
+            <tr>
+                <td>Exception</td>
+                <td>Exception</td>
+                <td>JSON-serialized .NET exception, in case the export process failed with an error.</td>
+            </tr>
+        </tbody>
+    </table>
+    <p>So, basically using the <code>GeneratedFiles</code> property, tools can access all of the content that was
+        directly
+        part of the content set.</p>
+    <p>The tool will automatically export all top-level content as well as all content that can be reached via AskDelphi
+        relations, but only the topics that are directly in the content set definition will be added at the top level.
+    </p>
+    <h2 id="content-json-files">Content JSON files</h2>
+    <p>There are many different typoes of content files, but they all represent AskDelphi topics and will all share the
+        following basic structure:</p>
+    <table>
+        <thead>
+            <tr>
+                <th>Property</th>
+                <th>Type</th>
+                <th>Contents</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Type (required)</td>
+                <td>String</td>
+                <td>Short name of the topic&#39;s type. Depending on the type additional properties are availlable on
+                    top of
+                    the six that are common for all content.</td>
+            </tr>
+            <tr>
+                <td>URL</td>
+                <td>URI</td>
+                <td>The URI that should be used to open this topic in the end-user&#39;s webbrowser.</td>
+            </tr>
+            <tr>
+                <td>Guid</td>
+                <td>Guid</td>
+                <td>The unique ID of the content element, typically the topic guid.</td>
+            </tr>
+            <tr>
+                <td>Title</td>
+                <td>String</td>
+                <td>The title as it appears in the topic list.</td>
+            </tr>
+            <tr>
+                <td>ShortDescription</td>
+                <td>String</td>
+                <td>The contents of the topic description in AskDelphi.</td>
+            </tr>
+            <tr>
+                <td>Tags</td>
+                <td>String[]</td>
+                <td>An array of the titles of all hierarchy nodes that this object ha sben tagged to across all
+                    hierarchies.
+                </td>
+            </tr>
+            <tr>
+                <td>Hash</td>
+                <td>String</td>
+                <td>A SHA1 hash of the JSON object before the HAsh property is set. This cna be used to detect anyc
+                    hanges
+                    in this object when processing updates. If the hash changes, the object has changed.</td>
+            </tr>
+            <tr>
+                <td>RelatedContent</td>
+                <td>Relation[]</td>
+                <td>A list of relations to other contents with some metadata bout the relation between this object and
+                    the
+                    related topic.</td>
+            </tr>
+        </tbody>
+    </table>
+    <p>The following properties are available for all topic types that support thumbnails or key visuals:</p>
+    <table>
+        <thead>
+            <tr>
+                <th>Property</th>
+                <th>Type</th>
+                <th>Contents</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>ThumbnailFile</td>
+                <td>Path</td>
+                <td>Path of the file that contains the thumbnail image for this content, if any.</td>
+            </tr>
+            <tr>
+                <td>KeyVisualFile</td>
+                <td>Path</td>
+                <td>Path of the file that contains the key visual image, image map or video for this content, if any.
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <h3 id="the-relation-model">The Relation model</h3>
+    <p>The structure of a Relation typed object as found in the RelatedContent property is as follows:</p>
+    <table>
+        <thead>
+            <tr>
+                <th>Property</th>
+                <th>Type</th>
+                <th>Contents</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>TargetFile</td>
+                <td>Path</td>
+                <td>Path of the file that contains the target topic&#39;s model. For each topic there will be esxactly
+                    one
+                    file generated, so if multipel object refer to the same target via relations, this file will be
+                    included
+                    only once.</td>
+            </tr>
+            <tr>
+                <td>TargetTitle</td>
+                <td>String</td>
+                <td>The title of the target topic as it would appear in the topic list.</td>
+            </tr>
+            <tr>
+                <td>PyramidLevel</td>
+                <td>String</td>
+                <td>This indicated to which named group of relations the topic belongs. These names have a meaning and
+                    they
+                    were chosen when the project&#39;s content design was defined. If the pyramid level is empty that
+                    typically means that the relation is internal to AskDelphi and exists for technical reasons only.
+                </td>
+            </tr>
+            <tr>
+                <td>IsChild</td>
+                <td>Boolean</td>
+                <td>If true this means that this relation was marked in the project&#39;s content design as an aggregate
+                    relation, i.e. the targeted content is considered part of the parent.</td>
+            </tr>
+        </tbody>
+    </table>
+    <h3 id="type-specific-properties">Type-specific properties</h3>
+    <p>In this section the additional properties that are available for each of the model types are described. Which
+        properties are availabel depends on the value of the <em>Type</em> property that all objects start with. When
+        parsing the JSON it makes sense to first read the type, and then depending on the type decide which properties
+        to
+        support.</p>
+    <h4 id="actionmodel">ActionModel</h4>
+    <p>Action topics are the lowest in the process, task, action hierarchy; they are used to describe a single action in
+        a
+        process step. From a modelling perspective, these are content topics without a complex structure.</p>
+    <table>
+        <thead>
+            <tr>
+                <th>Property</th>
+                <th>Type</th>
+                <th>Contents</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Body</td>
+                <td>HTML</td>
+                <td>Rich-text (html) body of the action topic.</td>
+            </tr>
+        </tbody>
+    </table>
+    <h4 id="blobmodel">BlobModel</h4>
+    <p>Blob topics are used to model binary files in the project. Binary files are for example ZIP files, Office
+        documents
+        or PDF files.</p>
+    <table>
+        <thead>
+            <tr>
+                <th>Property</th>
+                <th>Type</th>
+                <th>Contents</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>ContentType</td>
+                <td>String</td>
+                <td>Mime type that describes the target&#39;s contents.</td>
+            </tr>
+            <tr>
+                <td>AlternativeText</td>
+                <td>String</td>
+                <td>Alternative text for the content, if specified.</td>
+            </tr>
+            <tr>
+                <td>AspectRatio</td>
+                <td>String</td>
+                <td>Indication of the content&#39;s aspect ratio, if relevant.</td>
+            </tr>
+            <tr>
+                <td>BlobResourceFile</td>
+                <td>Path</td>
+                <td>Path to the resource file that&#39;s modeled by the blob topic.</td>
+            </tr>
+        </tbody>
+    </table>
+    <h4 id="conceptmodel">ConceptModel</h4>
+    <p>A concept or supportking knowledge model is a model that is intended to describe background knowledge regarding a
+        subject. The content is divided into multiple named sections.</p>
+    <table>
+        <thead>
+            <tr>
+                <th>Property</th>
+                <th>Type</th>
+                <th>Contents</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Body</td>
+                <td>HTML</td>
+                <td>Rich-text (html) body of the topic.</td>
+            </tr>
+            <tr>
+                <td>Parts</td>
+                <td>ConceptStepModel[]</td>
+                <td>Ordered list of the sections that make up the total content.</td>
+            </tr>
+        </tbody>
+    </table>
+    <p>The ConceptStepModel object is structrured as follows:</p>
+    <table>
+        <thead>
+            <tr>
+                <th>Property</th>
+                <th>Type</th>
+                <th>Contents</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Title</td>
+                <td>String</td>
+                <td>Title of the section</td>
+            </tr>
+            <tr>
+                <td>ResourceFilename</td>
+                <td>Path</td>
+                <td>Path of an image file or video (optional) that best descreibes this section.</td>
+            </tr>
+            <tr>
+                <td>Body</td>
+                <td>HTML</td>
+                <td>Rich-text (html) body of the section.</td>
+            </tr>
+        </tbody>
+    </table>
+    <h4 id="examplemodel">ExampleModel</h4>
+    <p>Example topics are used to describe examples, they are very much like actions otherwise.</p>
+    <table>
+        <thead>
+            <tr>
+                <th>Property</th>
+                <th>Type</th>
+                <th>Contents</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Body</td>
+                <td>HTML</td>
+                <td>Rich-text (html) body of the action topic.</td>
+            </tr>
+        </tbody>
+    </table>
+    <h4 id="externalcontentmodel">ExternalContentModel</h4>
+    <p>External content topics are used to refer to externally hosted content by means of a URL. These topics can either
+        model a reference to the other content by means of a URL that can be opened in the browser, or they can be
+        marked as
+        referrinfg to a downloadable file that&#39;s hosted outside the AskDelphi content repository. These have the
+        following additional properties:</p>
+    <table>
+        <thead>
+            <tr>
+                <th>Property</th>
+                <th>Type</th>
+                <th>Contents</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>LinkURL</td>
+                <td>URI</td>
+                <td>URL that identifies the location of the external data.</td>
+            </tr>
+            <tr>
+                <td>LinkTarget</td>
+                <td>String</td>
+                <td>Either is undefined, null, &#39;newwindow&#39; or &#39;currentwindow&#39;, indicating the preferred
+                    way
+                    of opening this link from a bowser.</td>
+            </tr>
+            <tr>
+                <td>LinkType</td>
+                <td>String</td>
+                <td>Either &#39;link&#39; if this is a hyperlink, or &#39;download&#39; if the target is a file to be
+                    downloaded. If null, assume link.</td>
+            </tr>
+        </tbody>
+    </table>
+    <h4 id="menumodel">MenuModel</h4>
+    <p>Models an AskDelphi menu topic.</p>
+    <table>
+        <thead>
+            <tr>
+                <th>Property</th>
+                <th>Type</th>
+                <th>Contents</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Menu</td>
+                <td>MenuEditorData</td>
+                <td>Optional list of menu groups and top-level navigation items.</td>
+            </tr>
+        </tbody>
+    </table>
+    <p>The MenuEditorData is as follows:</p>
+    <table>
+        <thead>
+            <tr>
+                <th>Property</th>
+                <th>Type</th>
+                <th>Contents</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>MenuGroups</td>
+                <td>MenuGroup[]</td>
+                <td>Optional list of menu groups .</td>
+            </tr>
+            <tr>
+                <td>AdditionalHeaderMenuItems</td>
+                <td>AdditionalHeaderMenuItem[]</td>
+                <td>Optional list of menu groups .</td>
+            </tr>
+        </tbody>
+    </table>
+    <p>The MenuGroup structure is as follows:</p>
+    <table>
+        <thead>
+            <tr>
+                <th>Property</th>
+                <th>Type</th>
+                <th>Contents</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Name</td>
+                <td>string</td>
+                <td>Name of the group</td>
+            </tr>
+            <tr>
+                <td>Items</td>
+                <td>MenuGroupTarget[]</td>
+                <td>Optional list of menu items for the group.</td>
+            </tr>
+        </tbody>
+    </table>
+    <p>The AdditionalHeaderMenuItem structure is as follows:</p>
+    <table>
+        <thead>
+            <tr>
+                <th>Property</th>
+                <th>Type</th>
+                <th>Contents</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Icon</td>
+                <td>string</td>
+                <td>Font awesome icon to be used for the top-level item.</td>
+            </tr>
+            <tr>
+                <td>Target</td>
+                <td>MenuGroupTarget</td>
+                <td>Single target topic for this item.</td>
+            </tr>
+        </tbody>
+    </table>
+    <p>The MenuGroupTarget structure is as follows:</p>
+    <table>
+        <thead>
+            <tr>
+                <th>Property</th>
+                <th>Type</th>
+                <th>Contents</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Title</td>
+                <td>string</td>
+                <td>User-provided title for the menu entry.</td>
+            </tr>
+            <tr>
+                <td>TargetId</td>
+                <td>string</td>
+                <td>Topic guid of the target topic. This is also present in the list of outgoing relations, where
+                    you&#39;ll
+                    also find the filename for this content.</td>
+            </tr>
+            <tr>
+                <td>TargetName</td>
+                <td>string</td>
+                <td>Name of the target topic.</td>
+            </tr>
+        </tbody>
+    </table>
+    <h4 id="nuggetmodel">NuggetModel</h4>
+    <p>Models a nugget of knowledge following the nugget datamodel.</p>
+    <table>
+        <thead>
+            <tr>
+                <th>Property</th>
+                <th>Type</th>
+                <th>Contents</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>FullDescription</td>
+                <td>String</td>
+                <td>An extended description of the concept that&#39;s being modeled by this nugget.</td>
+            </tr>
+            <tr>
+                <td>InstructionVideoFilename</td>
+                <td>Path</td>
+                <td>Path to an instruction video file.</td>
+            </tr>
+            <tr>
+                <td>TipImageFilename</td>
+                <td>Path</td>
+                <td>Path to a tip image for this nugget.</td>
+            </tr>
+            <tr>
+                <td>TipText</td>
+                <td>HTML</td>
+                <td>Rich-text description of the tip.</td>
+            </tr>
+            <tr>
+                <td>Steps</td>
+                <td>NuggetStep[]</td>
+                <td>Ordered lst of steps that make up the step-by-step instructions for completing the task.</td>
+            </tr>
+        </tbody>
+    </table>
+    <p>The NuggetStep model is as follows:</p>
+    <table>
+        <thead>
+            <tr>
+                <th>Property</th>
+                <th>Type</th>
+                <th>Contents</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Instructions</td>
+                <td>HTML</td>
+                <td>Written instruction for completing this step .</td>
+            </tr>
+            <tr>
+                <td>Text</td>
+                <td>String</td>
+                <td>Written instruction for completing this step .</td>
+            </tr>
+            <tr>
+                <td>ImageFilename</td>
+                <td>Path</td>
+                <td>Path of an image that&#39;s representative for this process-step.</td>
+            </tr>
+        </tbody>
+    </table>
+    <h4 id="personmodel">PersonModel</h4>
+    <table>
+        <thead>
+            <tr>
+                <th>Property</th>
+                <th>Type</th>
+                <th>Contents</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Body</td>
+                <td>HTML</td>
+                <td>Rich-text (html) body of the person&#39;s description.</td>
+            </tr>
+            <tr>
+                <td>EMail</td>
+                <td>String</td>
+                <td>E-mail address of the person.</td>
+            </tr>
+            <tr>
+                <td>ProfileURL</td>
+                <td>URI</td>
+                <td>Link to the person&#39;s profile page.</td>
+            </tr>
+        </tbody>
+    </table>
+    <h4 id="processmodel">ProcessModel</h4>
+    <p>A description of a top-level process, expect tasks as children.</p>
+    <table>
+        <thead>
+            <tr>
+                <th>Property</th>
+                <th>Type</th>
+                <th>Contents</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Body</td>
+                <td>HTML</td>
+                <td>Rich-text (html) body of the process.</td>
+            </tr>
+        </tbody>
+    </table>
+    <h4 id="simpletopicmodel">SimpleTopicModel</h4>
+    <p>Used to describe any content that has a rich-text body.</p>
+    <table>
+        <thead>
+            <tr>
+                <th>Property</th>
+                <th>Type</th>
+                <th>Contents</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Body</td>
+                <td>HTML</td>
+                <td>Rich-text (html) body for this simple topic.</td>
+            </tr>
+        </tbody>
+    </table>
+    <h4 id="taskmodel">TaskModel</h4>
+    <p>Tasks are part of the process, they in trun have nuggets or actions as children.</p>
+    <table>
+        <thead>
+            <tr>
+                <th>Property</th>
+                <th>Type</th>
+                <th>Contents</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Body</td>
+                <td>HTML</td>
+                <td>Rich-text (html) body for this task.</td>
+            </tr>
+        </tbody>
+    </table>
+    <h4 id="toolmodel">ToolModel</h4>
+    <p>Tools have some descriptive text for the tool and as part of their relations they will provide a link to the
+        actual
+        tool.</p>
+    <table>
+        <thead>
+            <tr>
+                <th>Property</th>
+                <th>Type</th>
+                <th>Contents</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Introduction</td>
+                <td>HTML</td>
+                <td>Rich-text (html) body introducting this tool.</td>
+            </tr>
+            <tr>
+                <td>Details</td>
+                <td>HTML</td>
+                <td>Rich-text (html) detailed description of the tool.</td>
+            </tr>
+        </tbody>
+    </table>
+    <h4 id="collectionmodel">CollectionModel</h4>
+    <p>Collections are used to group items together in a way that&#39;s not hierarchical. They are used to group content
+        that is related in some way, but not in a way that can be described by a parent-child relationship.
+        They can be used on homepages or be embedded in other content.</p>
+    <table>
+        <thead>
+            <tr>
+                <th>Property</th>
+                <th>Type</th>
+                <th>Contents</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Items</td>
+                <td>CollectionItemModel[]</td>
+                <td>Ordered list of items that make up this collection.</td>
+            </tr>
+        </tbody>
+    </table>
+    <p>The CollectionItemModel model is as follows:</p>
+    <table>
+        <thead>
+            <tr>
+                <th>Property</th>
+                <th>Type</th>
+                <th>Contents</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Title</td>
+                <td>String</td>
+                <td>Title of the item.</td>
+            </tr>
+            <tr>
+                <td>Body</td>
+                <td>HTML</td>
+                <td>Rich-text (html) body of the collection item.</td>
+            </tr>
+            <tr>
+                <td>Target</td>
+                <td>CollectionItemTarget</td>
+                <td>The target topic of the item.</td>
+            </tr>
+            <tr>
+                <td>ButtonLabel</td>
+                <td>String</td>
+                <td>text to be displayed on the button that links to the target.</td>
+            </tr>
+            <tr>
+                <td>MediaFile</td>
+                <td>Path</td>
+                <td>Path of an image that&#39;s representative for this collection item.</td>
+            </tr>
+        </tbody>
+    </table>
+    <p>The CollectionItemTarget model is as follows:</p>
+    <table>
+        <thead>
+            <tr>
+                <th>Property</th>
+                <th>Type</th>
+                <th>Contents</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>TopicGuid</td>
+                <td>String</td>
+                <td>Unique identifier of the collection item&#39;s target topic.</td>
+            </tr>
+            <tr>
+                <td>Filename</td>
+                <td>String</td>
+                <td>Path of the file that contains the target topic&#39;s model.</td>
+            </tr>
+        </tbody>
+    </table>
+</body>
+
+</html>

@@ -1,0 +1,65 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 18
+VisualStudioVersion = 18.6.11806.211
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AskDelphi.ProjectPublisher", "AskDelphi.ProjectPublisher\AskDelphi.ProjectPublisher.csproj", "{F11E9AF2-703F-4355-B32A-E3EBF93B72D9}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AskDelphi.EditingAPI", "AskDelphi.EditingAPI\AskDelphi.EditingAPI.csproj", "{4F68D998-E578-4984-96A7-924331C51EB4}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AdToJSON", "AdToJSON\AdToJSON.csproj", "{00D8D106-715E-4A25-8CFE-2F869F6E7163}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{5ED51F1A-6AE8-4799-8258-61602A895445}"
+	ProjectSection(SolutionItems) = preProject
+		.gitignore = .gitignore
+		README.md = README.md
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "documentation", "documentation", "{EFA7B8B7-10ED-4678-BC9B-1A7A4938A16B}"
+	ProjectSection(SolutionItems) = preProject
+		documentation\command-line.md = documentation\command-line.md
+		documentation\exported-data.md = documentation\exported-data.md
+		documentation\index.html = documentation\index.html
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AdToJSONUi", "AdToJSONUi\AdToJSONUi.csproj", "{3E38BE8F-74C2-4986-AB82-85D7D8E4C7B0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AskDelphi.JSONExport", "AskDelphi.JSONExport\AskDelphi.JSONExport.csproj", "{424B2D83-B5A9-46EE-9534-A82E214ACBE0}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{F11E9AF2-703F-4355-B32A-E3EBF93B72D9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F11E9AF2-703F-4355-B32A-E3EBF93B72D9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F11E9AF2-703F-4355-B32A-E3EBF93B72D9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F11E9AF2-703F-4355-B32A-E3EBF93B72D9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4F68D998-E578-4984-96A7-924331C51EB4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4F68D998-E578-4984-96A7-924331C51EB4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4F68D998-E578-4984-96A7-924331C51EB4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4F68D998-E578-4984-96A7-924331C51EB4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{00D8D106-715E-4A25-8CFE-2F869F6E7163}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{00D8D106-715E-4A25-8CFE-2F869F6E7163}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{00D8D106-715E-4A25-8CFE-2F869F6E7163}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{00D8D106-715E-4A25-8CFE-2F869F6E7163}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3E38BE8F-74C2-4986-AB82-85D7D8E4C7B0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3E38BE8F-74C2-4986-AB82-85D7D8E4C7B0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3E38BE8F-74C2-4986-AB82-85D7D8E4C7B0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3E38BE8F-74C2-4986-AB82-85D7D8E4C7B0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{424B2D83-B5A9-46EE-9534-A82E214ACBE0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{424B2D83-B5A9-46EE-9534-A82E214ACBE0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{424B2D83-B5A9-46EE-9534-A82E214ACBE0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{424B2D83-B5A9-46EE-9534-A82E214ACBE0}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{EFA7B8B7-10ED-4678-BC9B-1A7A4938A16B} = {5ED51F1A-6AE8-4799-8258-61602A895445}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {47350841-01BE-4D11-B53A-39C2BC789B83}
+	EndGlobalSection
+EndGlobal
